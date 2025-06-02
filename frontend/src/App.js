@@ -1,17 +1,24 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 
 function App() {
-  useEffect(() => {
-    axios.get('http://localhost:5000/')
-      .then(res => console.log(res.data))
-      .catch(err => console.error('Error fetching API:', err));
-  }, []);
+  const handleLogin = async (credentialResponse) => {
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/google', {
+        token: credentialResponse.credential,
+      });
+      console.log('Backend response:', res.data);
+      // Save the JWT, set user, redirect, etc.
+    } catch (err) {
+      console.error('Login error', err);
+    }
+  };
 
   return (
     <div>
-      <h1>Welcome to the Plated</h1>
-      <p>Check your browser console to see the API response.</p>
+      <h1>Welcome</h1>
+      <GoogleLogin onSuccess={handleLogin} onError={() => console.log('Login Failed')} />
     </div>
   );
 }
